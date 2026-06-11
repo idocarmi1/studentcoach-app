@@ -60,6 +60,8 @@ The recommendations focus on useful next steps:
 - Weekly consistency
 - Open academic tasks
 
+The card also supports a small question flow. Students can ask about exams, pressure, time, schedule, or another topic, and the app returns a useful mock answer. This keeps the experience interactive without external AI APIs or API keys.
+
 ## Analytics UX
 
 The Analytics page turns progress into a quick scan:
@@ -70,6 +72,18 @@ The Analytics page turns progress into a quick scan:
 - Achievement cards reinforce momentum
 
 The page uses mock data but is structured like a real product analytics surface.
+
+Phone preview analytics rules keep the page readable inside the phone frame: metric cards stack cleanly, large numbers scale down, chart bars fit the available width, and achievement cards avoid horizontal overflow.
+
+## Modal Interactions
+
+StudentCoach uses reusable RTL modal panels for practical mock workflows:
+
+- Calendar URL sync with Google Calendar export guidance
+- WhatsApp group link storage and validation
+- Manual task creation
+
+The modals use the same tokens as the rest of the app, so light mode, dark mode, and phone preview stay visually consistent.
 
 ## Cards, Spacing, Colors, and Hierarchy
 

@@ -28,6 +28,10 @@ Key components:
 - `AICoachCard`: mock personal coach recommendations on the dashboard
 - `DiaryPage`: weekly diary / יומן שבועי
 - `TasksPage`: task manager / מנהל משימות
+- `InteractionModal`: shared modal switch for dashboard actions
+- `CalendarSyncPanel`: local mock calendar URL sync flow
+- `WhatsAppPanel`: local WhatsApp link storage and validation flow
+- `NewTaskForm`: manual task creation form
 - `AnalyticsPage`: weekly metrics, mini chart, progress summary, and achievement recap
 - `ProfilePage`: personal area / אזור אישי
 - `AboutProjectPage`: portfolio case-study page
@@ -46,9 +50,20 @@ Current state includes:
 - `activePage`: controls which page is displayed
 - `previewMode`: switches between desktop view and phone preview
 - `theme`: switches between regular light mode and dark mode
+- `activeModal`: controls the currently open interaction modal
+- `savedTasks`: stores manually created tasks from localStorage
+- AI Coach question and answer state inside `AICoachCard`
 - Pomodoro timer state inside `PomodoroTimer`
 
 This is enough for the current single-user frontend demo. A larger production version could introduce a global store or server-backed state.
+
+The prototype also uses localStorage for:
+
+- Manually added tasks
+- Calendar URL mock sync
+- WhatsApp group invite link
+
+No OAuth, backend sync, external AI API, or API keys are used.
 
 The current page-state approach still renders only one page at a time, including the Analytics and About Project pages.
 

@@ -20,7 +20,7 @@ StudentCoach addresses this by combining planning, focus, and encouragement into
 ## Main Features
 
 - Home dashboard / לוח בקרה with daily flow and coach check-in
-- AI Coach card / מאמן אישי with calm mock recommendations
+- AI Coach card / מאמן אישי with calm mock recommendations and a local mock question flow
 - Weekly diary / יומן שבועי with academic, personal, and focus events
 - Task manager / מנהל משימות with categories, statuses, and progress
 - Analytics page / סטטיסטיקות with weekly metrics, progress bars, mini chart, and achievement summary
@@ -29,6 +29,10 @@ StudentCoach addresses this by combining planning, focus, and encouragement into
 - About Project page / אודות הפרויקט for portfolio and case-study presentation
 - Floating robot assistant that opens the focus center
 - Pomodoro timer with start, pause, reset, and XP reward message
+- Calendar URL mock sync stored in localStorage
+- WhatsApp group link storage with validation and open action
+- Ono Academic College Yedion syllabus shortcut
+- Manual task creation with localStorage persistence
 - Desktop view and phone preview mode
 - Regular light mode and dark mode
 - Full Hebrew RTL interface
@@ -74,6 +78,17 @@ The app uses CSS tokens for:
 - Card, elevated, and floating shadows
 
 These tokens keep the dashboard, diary, tasks, analytics, profile, focus center, about page, phone preview, and dark mode visually consistent.
+
+## Interactive Mock Flows
+
+The prototype includes local-only interactions without backend services or API keys:
+
+- Calendar sync opens a modal with Google Calendar export guidance and saves an iCal / Calendar URL to localStorage.
+- WhatsApp groups can store a valid `https://chat.whatsapp.com/` or `https://wa.me/` link and reopen it later.
+- The syllabus action opens the Ono Academic College Yedion page.
+- New tasks can be created manually, added to the task list, and persisted in localStorage.
+- The AI Coach answers common student questions with mock logic for exams, pressure, time planning, and default next-step guidance.
+- The Analytics page includes responsive phone-preview rules so metric cards, charts, and achievement summaries fit small widths.
 
 ## Run Locally
 

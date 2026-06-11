@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { achievements, analytics, dailyFlow, taskCategories, tasks, user, weeklyEvents } from './data/mockData.js';
+import { achievements, analytics, dailyFlow, taskCategories, tasks as mockTasks, user, weeklyEvents } from './data/mockData.js';
+
+const USER_TASKS_STORAGE_KEY = 'studentcoach-user-tasks';
 
 const navItems = [
   { id: 'home', label: 'לוח בקרה' },
@@ -20,11 +22,50 @@ function App() {
   const [activePage, setActivePage] = useState('home');
   const [previewMode, setPreviewMode] = useState('desktop');
   const [theme, setTheme] = useState('light');
+  const [activeModal, setActiveModal] = useState(null);
+  const [userTasks, setUserTasks] = useState(() => readStoredUserTasks());
+  const [toast, setToast] = useState('');
+
+  const allTasks = [...mockTasks, ...userTasks];
+
+  useEffect(() => {
+    if (!toast) return undefined;
+
+    const timer = window.setTimeout(() => setToast(''), 3200);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
+  function openModal(name) {
+    setActiveModal(name);
+  }
+
+  function closeModal() {
+    setActiveModal(null);
+  }
+
+  function addTask(task) {
+    const newTask = {
+      id: createTaskId(),
+      title: task.title.trim(),
+      category: task.category,
+      status: task.status
+    };
+
+    setUserTasks((currentTasks) => {
+      const nextTasks = [...currentTasks, newTask];
+      window.localStorage.setItem(USER_TASKS_STORAGE_KEY, JSON.stringify(nextTasks));
+      return nextTasks;
+    });
+
+    closeModal();
+    setActivePage('tasks');
+    setToast('המשימה נוספה בהצלחה');
+  }
 
   const pages = {
-    home: <HomePage goTo={setActivePage} />,
+    home: <HomePage goTo={setActivePage} openModal={openModal} />,
     diary: <DiaryPage />,
-    tasks: <TasksPage />,
+    tasks: <TasksPage taskList={allTasks} openModal={openModal} />,
     analytics: <AnalyticsPage />,
     profile: <ProfilePage />,
     about: <AboutProjectPage />,
@@ -44,6 +85,13 @@ function App() {
           {pages[activePage]}
         </AppShell>
       </div>
+      <InteractionModal activeModal={activeModal} onClose={closeModal} onAddTask={addTask} />
+      {toast && (
+        <div className="toast" role="status">
+          <span>{toast}</span>
+          <button onClick={() => setActivePage('tasks')}>מעבר למשימות</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -108,7 +156,7 @@ function FloatingRobot({ onClick }) {
   );
 }
 
-function HomePage({ goTo }) {
+function HomePage({ goTo, openModal }) {
   return (
     <section className="page">
       <PageHeader eyebrow="לוח בקרה" title={`${user.greeting}, ${user.name}`} text="יום מסודר מתחיל בצעד קטן וברור." />
@@ -122,11 +170,11 @@ function HomePage({ goTo }) {
         <article className="card sync-card">
           <h3>סנכרון Google Calendar</h3>
           <p>חבר אירועים אישיים ואקדמיים לתמונה אחת רגועה.</p>
-          <button className="secondary-btn">סנכרון יומן</button>
+          <button className="secondary-btn" onClick={() => openModal('calendar')}>סנכרון יומן</button>
         </article>
       </div>
       <AICoachCard />
-      <QuickActions />
+      <QuickActions openModal={openModal} />
       <DailyFlow />
       <UpcomingSchedule />
     </section>
@@ -134,12 +182,31 @@ function HomePage({ goTo }) {
 }
 
 function AICoachCard() {
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
   const recommendations = [
     'יש לך מבחן בעוד 4 ימים',
     'מומלץ להשלים 2 סשני פוקוס היום',
     'השבוע אתה עומד ב-82% מהיעדים שלך',
     'נשארו 3 משימות אקדמיות פתוחות'
   ];
+
+  function askCoach(event) {
+    event.preventDefault();
+    const normalizedQuestion = question.trim();
+
+    if (!normalizedQuestion) return;
+
+    if (/מבחן|בחינה/.test(normalizedQuestion)) {
+      setAnswer('מומלץ לפרק את ההכנה לבלוקים של 25 דקות ולסמן 2 נושאים חשובים להיום.');
+    } else if (/עומס|לחץ/.test(normalizedQuestion)) {
+      setAnswer('נראה שיש עומס. כדאי לבחור משימה אחת קריטית ולהעביר משימות פחות חשובות למחר.');
+    } else if (/זמן|לו״ז|לוז|יומן/.test(normalizedQuestion)) {
+      setAnswer('כדאי לבדוק את היומן השבועי ולסגור חלונות פוקוס קצרים בין התחייבויות.');
+    } else {
+      setAnswer('אני ממליץ להתחיל ממשימה אחת קטנה, להפעיל פומודורו, ואז לבדוק מחדש את ההתקדמות.');
+    }
+  }
 
   return (
     <section className="card ai-coach-card" aria-labelledby="ai-coach-title">
@@ -154,16 +221,44 @@ function AICoachCard() {
             </div>
           ))}
         </div>
+        <form className="coach-chat" onSubmit={askCoach}>
+          <label htmlFor="coach-question">שאל את המאמן</label>
+          <div className="inline-form-row">
+            <input
+              id="coach-question"
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+              placeholder="שאל את המאמן שאלה..."
+            />
+            <button className="primary-btn" type="submit">שאל</button>
+          </div>
+          {answer && (
+            <div className="coach-answer" role="status">
+              <strong>תשובת המאמן</strong>
+              <p>{answer}</p>
+            </div>
+          )}
+        </form>
       </div>
     </section>
   );
 }
 
-function QuickActions() {
+function QuickActions({ openModal }) {
+  const actions = [
+    { label: 'סנכרון יומן', onClick: () => openModal('calendar') },
+    { label: 'קבוצות וואטסאפ', onClick: () => openModal('whatsapp') },
+    {
+      label: 'פתיחת ידיעון הקריה האקדמית אונו',
+      onClick: () => window.open('https://yedion.ono.ac.il/yedion/fireflyweb.aspx', '_blank', 'noopener,noreferrer')
+    },
+    { label: 'משימה חדשה', onClick: () => openModal('task') }
+  ];
+
   return (
     <div className="quick-actions">
-      {['סנכרון יומן', 'קבוצות וואטסאפ', 'סילבוס', 'משימה חדשה'].map((action) => (
-        <button key={action}>{action}</button>
+      {actions.map((action) => (
+        <button key={action.label} onClick={action.onClick}>{action.label}</button>
       ))}
     </div>
   );
@@ -244,13 +339,13 @@ function DiaryPage() {
   );
 }
 
-function TasksPage() {
-  const hasTasks = tasks.length > 0;
+function TasksPage({ taskList, openModal }) {
+  const hasTasks = taskList.length > 0;
 
   return (
     <section className="page">
       <PageHeader eyebrow="מנהל משימות" title="משימות בלי עומס" text="מחלקים לפי אזורים, סוגרים בקצב שלך." />
-      <button className="primary-btn add-task">+ משימה חדשה</button>
+      <button className="primary-btn add-task" onClick={() => openModal('task')}>+ משימה חדשה</button>
       <div className="category-grid">
         {taskCategories.map((category) => (
           <article className="card category-card" key={category.name}>
@@ -260,7 +355,7 @@ function TasksPage() {
       </div>
       <div className="task-list">
         {hasTasks ? (
-          tasks.map((task) => (
+          taskList.map((task) => (
             <article className="task-card" key={task.id}>
               <div>
                 <span>{task.category}</span>
@@ -278,6 +373,199 @@ function TasksPage() {
         )}
       </div>
     </section>
+  );
+}
+
+function InteractionModal({ activeModal, onClose, onAddTask }) {
+  if (!activeModal) return null;
+
+  const modalTitles = {
+    calendar: 'סנכרון יומן',
+    whatsapp: 'קבוצות וואטסאפ',
+    task: 'הוספת משימה חדשה'
+  };
+
+  return (
+    <Modal title={modalTitles[activeModal]} onClose={onClose}>
+      {activeModal === 'calendar' && <CalendarSyncPanel />}
+      {activeModal === 'whatsapp' && <WhatsAppPanel />}
+      {activeModal === 'task' && <NewTaskForm onAddTask={onAddTask} onClose={onClose} />}
+    </Modal>
+  );
+}
+
+function Modal({ title, children, onClose }) {
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') onClose();
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div className="modal-overlay" role="presentation">
+      <section className="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title" dir="rtl">
+        <header className="modal-header">
+          <h2 id="modal-title">{title}</h2>
+          <button className="modal-close" onClick={onClose} aria-label="סגירת חלון">×</button>
+        </header>
+        {children}
+      </section>
+    </div>
+  );
+}
+
+function CalendarSyncPanel() {
+  const [calendarUrl, setCalendarUrl] = useState(() => window.localStorage.getItem('studentcoach.calendarUrl') || '');
+  const [message, setMessage] = useState('');
+
+  function saveCalendarUrl(event) {
+    event.preventDefault();
+    window.localStorage.setItem('studentcoach.calendarUrl', calendarUrl.trim());
+    setMessage('הקישור נשמר בהצלחה');
+  }
+
+  return (
+    <div className="modal-content">
+      <article className="modal-option">
+        <h3>פתח Google Calendar</h3>
+        <p>כדי לחבר יומן Google אמיתי, ניתן לפתוח את Google Calendar ולהעתיק קישור iCal/URL ציבורי אם קיים.</p>
+        <button
+          className="secondary-btn"
+          onClick={() => window.open('https://calendar.google.com/calendar/u/0/r/settings/export', '_blank', 'noopener,noreferrer')}
+        >
+          פתח Google Calendar
+        </button>
+      </article>
+      <form className="modal-option" onSubmit={saveCalendarUrl}>
+        <h3>סנכרון באמצעות URL</h3>
+        <input
+          value={calendarUrl}
+          onChange={(event) => {
+            setCalendarUrl(event.target.value);
+            setMessage('');
+          }}
+          placeholder="הדבק כאן קישור iCal / Calendar URL"
+        />
+        <button className="primary-btn" type="submit">שמור קישור</button>
+        {message && <p className="form-message success" role="status">{message}</p>}
+      </form>
+    </div>
+  );
+}
+
+function WhatsAppPanel() {
+  const [whatsAppUrl, setWhatsAppUrl] = useState(() => window.localStorage.getItem('studentcoach.whatsappUrl') || '');
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const hasValidSavedLink = isValidWhatsAppLink(whatsAppUrl);
+
+  function saveWhatsAppUrl(event) {
+    event.preventDefault();
+    const trimmedUrl = whatsAppUrl.trim();
+
+    if (!isValidWhatsAppLink(trimmedUrl)) {
+      setError('נא להזין קישור WhatsApp תקין');
+      setMessage('');
+      return;
+    }
+
+    window.localStorage.setItem('studentcoach.whatsappUrl', trimmedUrl);
+    setWhatsAppUrl(trimmedUrl);
+    setError('');
+    setMessage('הקישור נשמר בהצלחה');
+  }
+
+  return (
+    <form className="modal-content" onSubmit={saveWhatsAppUrl}>
+      <div className="modal-option">
+        <label htmlFor="whatsapp-link">קישור לקבוצת WhatsApp</label>
+        <input
+          id="whatsapp-link"
+          value={whatsAppUrl}
+          onChange={(event) => {
+            setWhatsAppUrl(event.target.value);
+            setError('');
+            setMessage('');
+          }}
+          placeholder="הדבק קישור לקבוצת WhatsApp"
+        />
+        <button className="primary-btn" type="submit">שמור קישור</button>
+        {error && <p className="form-message error" role="alert">{error}</p>}
+        {message && <p className="form-message success" role="status">{message}</p>}
+      </div>
+      {hasValidSavedLink && (
+        <button
+          className="secondary-btn"
+          type="button"
+          onClick={() => window.open(whatsAppUrl, '_blank', 'noopener,noreferrer')}
+        >
+          פתח קבוצת וואטסאפ
+        </button>
+      )}
+    </form>
+  );
+}
+
+function NewTaskForm({ onAddTask, onClose }) {
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('לימודים');
+  const [status, setStatus] = useState('פתוח');
+  const [error, setError] = useState('');
+
+  function submitTask(event) {
+    event.preventDefault();
+
+    if (!title.trim()) {
+      setError('נא להזין כותרת משימה');
+      return;
+    }
+
+    onAddTask({
+      title: title.trim(),
+      category,
+      status
+    });
+  }
+
+  return (
+    <form className="modal-form" onSubmit={submitTask}>
+      <label>
+        <span>כותרת משימה</span>
+        <input
+          value={title}
+          onChange={(event) => {
+            setTitle(event.target.value);
+            setError('');
+          }}
+          placeholder="לדוגמה: לסיים עבודה להגשה"
+        />
+      </label>
+      <label>
+        <span>קטגוריה</span>
+        <select value={category} onChange={(event) => setCategory(event.target.value)}>
+          <option>לימודים</option>
+          <option>אישי</option>
+          <option>עבודה</option>
+          <option>חשוב להיום</option>
+        </select>
+      </label>
+      <label>
+        <span>סטטוס</span>
+        <select value={status} onChange={(event) => setStatus(event.target.value)}>
+          <option>פתוח</option>
+          <option>בתהליך</option>
+          <option>הושלם</option>
+        </select>
+      </label>
+      {error && <p className="form-message error" role="alert">{error}</p>}
+      <div className="modal-actions">
+        <button className="primary-btn" type="submit">הוסף משימה</button>
+        <button className="ghost-btn" type="button" onClick={onClose}>ביטול</button>
+      </div>
+    </form>
   );
 }
 
@@ -595,6 +883,44 @@ function RobotFace({ compact = false }) {
       {!compact && <div className="robot-body"><span /><span /><span /></div>}
     </div>
   );
+}
+
+function readStoredJson(key, fallbackValue) {
+  if (typeof window === 'undefined') return fallbackValue;
+
+  try {
+    const storedValue = window.localStorage.getItem(key);
+    return storedValue ? JSON.parse(storedValue) : fallbackValue;
+  } catch {
+    return fallbackValue;
+  }
+}
+
+function readStoredUserTasks() {
+  const storedTasks = readStoredJson(USER_TASKS_STORAGE_KEY, []);
+
+  if (!Array.isArray(storedTasks)) return [];
+
+  return storedTasks
+    .filter((task) => task && typeof task === 'object' && typeof task.title === 'string' && task.title.trim())
+    .map((task, index) => ({
+      id: task.id || `stored-${index}-${Date.now()}`,
+      title: task.title.trim(),
+      category: task.category || 'לימודים',
+      status: task.status || 'פתוח'
+    }));
+}
+
+function createTaskId() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return `manual-${crypto.randomUUID()}`;
+  }
+
+  return `manual-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function isValidWhatsAppLink(value) {
+  return value.startsWith('https://chat.whatsapp.com/') || value.startsWith('https://wa.me/');
 }
 
 export default App;
