@@ -1,24 +1,52 @@
 :root {
-  --bg: #eef7ff;
+  --font-body: "Segoe UI", "Arial", sans-serif;
+  --text-xs: 0.78rem;
+  --text-sm: 0.88rem;
+  --text-md: 1rem;
+  --text-lg: 1.18rem;
+  --heading-sm: 1.25rem;
+  --heading-md: 1.65rem;
+  --heading-lg: clamp(2rem, 4vw, 3.4rem);
+  --space-xs: 0.35rem;
+  --space-sm: 0.7rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.25rem;
+  --bg: #eef6fb;
   --bg-soft: #f8fbff;
-  --card: rgba(255, 255, 255, 0.82);
-  --card-strong: rgba(255, 255, 255, 0.92);
-  --surface: rgba(248, 251, 255, 0.84);
-  --nav: rgba(255, 255, 255, 0.64);
-  --control: rgba(255, 255, 255, 0.78);
-  --border: rgba(255, 255, 255, 0.74);
-  --text: #1d2b4f;
-  --muted: #657394;
-  --blue: #72b8ff;
-  --blue-strong: #398ff0;
-  --purple: #a990ff;
-  --purple-soft: #eee9ff;
-  --green: #8bd9bd;
-  --green-soft: #e8f8f1;
-  --track: #e7edf7;
-  --shadow: 0 18px 45px rgba(65, 108, 160, 0.18);
-  --soft-shadow: 0 10px 24px rgba(92, 117, 155, 0.12);
-  --radius: 24px;
+  --card: rgba(255, 255, 255, 0.86);
+  --card-strong: rgba(255, 255, 255, 0.96);
+  --surface: rgba(246, 249, 253, 0.92);
+  --nav: rgba(255, 255, 255, 0.78);
+  --control: rgba(255, 255, 255, 0.86);
+  --border: rgba(142, 160, 188, 0.24);
+  --text: #17233d;
+  --muted: #5c6b83;
+  --primary: #347fd8;
+  --primary-soft: rgba(52, 127, 216, 0.14);
+  --secondary: #7760d6;
+  --secondary-soft: rgba(119, 96, 214, 0.14);
+  --success: #2f9d73;
+  --success-soft: rgba(47, 157, 115, 0.13);
+  --warning: #c27b21;
+  --warning-soft: rgba(194, 123, 33, 0.14);
+  --blue: #67adef;
+  --blue-strong: var(--primary);
+  --purple: #8e7af0;
+  --purple-soft: var(--secondary-soft);
+  --green: #42b88a;
+  --green-soft: var(--success-soft);
+  --track: #dfe7f0;
+  --radius-sm: 0.7rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.35rem;
+  --radius-pill: 999px;
+  --shadow-card: 0 16px 38px rgba(40, 68, 105, 0.13);
+  --shadow-elevated: 0 24px 60px rgba(40, 68, 105, 0.2);
+  --shadow-floating: 0 18px 42px rgba(40, 68, 105, 0.22);
+  --shadow: var(--shadow-card);
+  --soft-shadow: 0 10px 24px rgba(64, 82, 112, 0.11);
+  --radius: var(--radius-lg);
   font-family: "Segoe UI", "Arial", sans-serif;
 }
 
@@ -36,44 +64,46 @@ body {
 .studentcoach-root {
   min-height: 100vh;
   color: var(--text);
-  background:
-    radial-gradient(circle at top right, rgba(167, 217, 255, 0.55), transparent 34rem),
-    radial-gradient(circle at bottom left, rgba(169, 144, 255, 0.24), transparent 28rem),
-    linear-gradient(145deg, #f8fcff 0%, var(--bg) 100%);
+  background: linear-gradient(145deg, #fbfdff 0%, var(--bg) 54%, #edf5f1 100%);
   transition: background 0.25s ease, color 0.25s ease;
 }
 
 .theme-light {
-  background:
-    radial-gradient(circle at top right, rgba(167, 217, 255, 0.55), transparent 34rem),
-    radial-gradient(circle at bottom left, rgba(169, 144, 255, 0.24), transparent 28rem),
-    linear-gradient(145deg, #f8fcff 0%, var(--bg) 100%);
+  background: linear-gradient(145deg, #fbfdff 0%, var(--bg) 54%, #edf5f1 100%);
 }
 
 .theme-dark {
-  --bg: #071827;
-  --bg-soft: #0b1f33;
-  --card: rgba(16, 38, 61, 0.94);
-  --card-strong: rgba(21, 52, 82, 0.96);
-  --surface: rgba(26, 58, 91, 0.9);
-  --nav: rgba(12, 31, 52, 0.94);
-  --control: rgba(13, 34, 56, 0.96);
-  --border: rgba(207, 226, 255, 0.18);
+  --bg: #0a1724;
+  --bg-soft: #0f2132;
+  --card: rgba(18, 36, 54, 0.96);
+  --card-strong: rgba(23, 48, 72, 0.98);
+  --surface: rgba(28, 54, 78, 0.92);
+  --nav: rgba(14, 31, 48, 0.96);
+  --control: rgba(16, 35, 54, 0.98);
+  --border: rgba(213, 228, 246, 0.18);
   --text: #f4f8ff;
-  --muted: #c7d7ea;
+  --muted: #c9d8e8;
+  --primary: #91cfff;
+  --primary-soft: rgba(145, 207, 255, 0.16);
+  --secondary: #c5b7ff;
+  --secondary-soft: rgba(197, 183, 255, 0.18);
+  --success: #9af0c8;
+  --success-soft: rgba(154, 240, 200, 0.16);
+  --warning: #ffd08a;
+  --warning-soft: rgba(255, 208, 138, 0.16);
   --blue: #7cc7ff;
-  --blue-strong: #a6dcff;
+  --blue-strong: var(--primary);
   --purple: #c9bdff;
-  --purple-soft: rgba(185, 167, 255, 0.24);
+  --purple-soft: var(--secondary-soft);
   --green: #a5efcf;
-  --green-soft: rgba(120, 226, 178, 0.2);
-  --track: rgba(207, 226, 255, 0.22);
-  --shadow: 0 18px 45px rgba(0, 0, 0, 0.38);
-  --soft-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-  background:
-    radial-gradient(circle at top right, rgba(66, 143, 202, 0.3), transparent 34rem),
-    radial-gradient(circle at bottom left, rgba(123, 99, 220, 0.24), transparent 28rem),
-    linear-gradient(145deg, #071827 0%, #0b1f33 100%);
+  --green-soft: var(--success-soft);
+  --track: rgba(213, 228, 246, 0.2);
+  --shadow-card: 0 18px 45px rgba(0, 0, 0, 0.34);
+  --shadow-elevated: 0 24px 62px rgba(0, 0, 0, 0.42);
+  --shadow-floating: 0 18px 42px rgba(0, 0, 0, 0.36);
+  --shadow: var(--shadow-card);
+  --soft-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  background: linear-gradient(145deg, #081420 0%, #102238 58%, #162a34 100%);
 }
 
 .control-bar {
@@ -121,6 +151,12 @@ button {
   cursor: pointer;
 }
 
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 58%, white);
+  outline-offset: 3px;
+}
+
 .app-shell {
   min-height: 100vh;
   display: grid;
@@ -165,7 +201,7 @@ button {
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  padding: 2rem 1rem 7.5rem;
+  padding: 2rem 1rem 10.75rem;
 }
 
 .preview-mobile .navigation {
@@ -182,21 +218,22 @@ button {
 }
 
 .preview-mobile .nav-list {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.25rem;
 }
 
 .preview-mobile .nav-list button {
-  padding: 0.75rem 0.35rem;
+  min-height: 2.7rem;
+  padding: 0.62rem 0.28rem;
   text-align: center;
-  font-size: 0.82rem;
+  font-size: 0.76rem;
 }
 
 .preview-mobile .page-frame {
   height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0 0 1rem;
+  padding: 0 0 1.5rem;
   scrollbar-width: thin;
 }
 
@@ -234,9 +271,14 @@ button {
 .preview-mobile .floating-robot {
   position: absolute;
   left: 1rem;
-  bottom: 6.5rem;
+  bottom: 9.6rem;
   width: 4.7rem;
   height: 4.7rem;
+}
+
+.preview-mobile .portfolio-footer {
+  grid-template-columns: 1fr;
+  text-align: center;
 }
 
 .navigation {
@@ -292,7 +334,7 @@ button {
   color: var(--muted);
   text-align: right;
   background: transparent;
-  transition: 0.2s ease;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .nav-list button.active,
@@ -300,6 +342,7 @@ button {
   color: var(--text);
   background: linear-gradient(135deg, rgba(114, 184, 255, 0.24), rgba(169, 144, 255, 0.22));
   box-shadow: inset 0 1px 0 white;
+  transform: translateX(-2px);
 }
 
 .theme-dark .nav-list button {
@@ -347,8 +390,9 @@ button {
 
 .page-header h1 {
   margin: 0.75rem 0 0.35rem;
-  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-size: var(--heading-lg);
   letter-spacing: 0;
+  line-height: 1.08;
 }
 
 .page-header p,
@@ -375,10 +419,20 @@ button {
   background: var(--card);
   box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .card {
   padding: 1.35rem;
+}
+
+.card:hover,
+.mini-card:hover,
+.task-card:hover,
+.day-card:hover {
+  border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-3px);
 }
 
 .coach-card {
@@ -399,6 +453,58 @@ button {
 
 .sync-card {
   align-content: center;
+}
+
+.ai-coach-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: start;
+  margin-top: var(--space-md);
+  background: linear-gradient(135deg, var(--card-strong), var(--primary-soft), var(--secondary-soft));
+}
+
+.ai-coach-icon {
+  width: 3.4rem;
+  height: 3.4rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  box-shadow: inset 0 -8px 14px rgba(23, 35, 61, 0.18);
+}
+
+.theme-dark .ai-coach-icon {
+  color: #081420;
+}
+
+.coach-recommendations {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.recommendation {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-sm);
+  align-items: start;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.recommendation span {
+  color: var(--secondary);
+  font-weight: 900;
+}
+
+.recommendation p {
+  margin: 0;
 }
 
 .primary-btn,
@@ -425,7 +531,7 @@ button {
 
 .secondary-btn {
   color: var(--blue-strong);
-  background: rgba(114, 184, 255, 0.16);
+  background: var(--primary-soft);
 }
 
 .theme-dark .secondary-btn,
@@ -445,6 +551,7 @@ button {
 .ghost-btn:hover,
 .complete-btn:hover {
   transform: translateY(-2px);
+  box-shadow: var(--soft-shadow);
 }
 
 .quick-actions {
@@ -619,6 +726,45 @@ button {
   margin: 0;
 }
 
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xl);
+  border: 1px dashed color-mix(in srgb, var(--primary) 34%, var(--border));
+  border-radius: var(--radius-lg);
+  color: var(--muted);
+  text-align: center;
+  background: var(--surface);
+}
+
+.empty-state.compact {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+}
+
+.empty-state span {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-size: var(--heading-sm);
+  font-weight: 900;
+}
+
+.empty-state strong {
+  color: var(--text);
+}
+
+.empty-state p {
+  max-width: 28rem;
+  margin: 0;
+  color: var(--muted);
+}
+
 .balance-card,
 .category-grid,
 .task-list {
@@ -645,6 +791,134 @@ button {
   border-radius: inherit;
   background: linear-gradient(90deg, var(--blue), var(--purple));
   animation: fillIn 0.9s ease both;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.metric-card {
+  min-height: 10.5rem;
+  display: grid;
+  align-content: space-between;
+}
+
+.metric-card span {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  font-weight: 800;
+}
+
+.metric-card strong {
+  margin: 0.45rem 0;
+  color: var(--primary);
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  line-height: 1;
+}
+
+.metric-card p {
+  margin: 0;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.85fr);
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.mini-chart {
+  min-height: 17rem;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-sm);
+  align-items: end;
+  padding-top: var(--space-lg);
+}
+
+.chart-bar {
+  min-width: 0;
+  display: grid;
+  gap: var(--space-sm);
+  justify-items: center;
+  align-items: end;
+}
+
+.chart-bar span {
+  width: 100%;
+  max-width: 2.4rem;
+  height: var(--value);
+  min-height: 2rem;
+  border-radius: var(--radius-pill) var(--radius-pill) var(--radius-sm) var(--radius-sm);
+  background: linear-gradient(180deg, var(--secondary), var(--primary));
+  box-shadow: 0 10px 22px rgba(52, 127, 216, 0.22);
+  animation: barRise 0.8s ease both;
+}
+
+.chart-bar small {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.analytics-page .achievements-card,
+.about-grid,
+.about-hero {
+  margin-top: var(--space-md);
+}
+
+.about-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-lg);
+  align-items: center;
+  background: linear-gradient(135deg, var(--card-strong), var(--success-soft));
+}
+
+.about-hero h2 {
+  margin: var(--space-sm) 0;
+  font-size: var(--heading-md);
+}
+
+.case-study-stats {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.case-study-stats strong {
+  min-width: 5rem;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-md);
+  color: var(--primary);
+  text-align: center;
+  background: var(--surface);
+  box-shadow: var(--soft-shadow);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.about-card h2 {
+  margin: 0 0 var(--space-sm);
+  color: var(--primary);
+  font-size: var(--heading-sm);
+}
+
+.portfolio-footer {
+  width: min(1180px, 100%);
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  justify-content: center;
+  gap: var(--space-sm) var(--space-lg);
+  margin: var(--space-xl) auto 0;
+  padding: var(--space-md);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: var(--text-sm);
 }
 
 .add-task {
@@ -984,10 +1258,21 @@ button {
   }
 }
 
+@keyframes barRise {
+  from {
+    height: 0;
+    opacity: 0.45;
+  }
+  to {
+    height: var(--value);
+    opacity: 1;
+  }
+}
+
 @media (max-width: 920px) {
   .app-shell {
     display: block;
-    padding: 1rem;
+    padding: 4.5rem 1rem 10.5rem;
   }
 
   .navigation {
@@ -1004,32 +1289,45 @@ button {
   }
 
   .nav-list {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.25rem;
   }
 
   .nav-list button {
-    padding: 0.75rem 0.35rem;
+    min-height: 2.8rem;
+    padding: 0.66rem 0.35rem;
     text-align: center;
-    font-size: 0.86rem;
+    font-size: 0.8rem;
   }
 
   .floating-robot {
     left: 1rem;
-    bottom: 6.5rem;
+    bottom: 9.5rem;
   }
 
   .dashboard-grid,
   .focus-grid,
   .profile-grid,
+  .analytics-grid,
+  .about-hero,
   .focus-hero {
     grid-template-columns: 1fr;
   }
 
   .category-grid,
   .mini-cards,
-  .badges {
+  .badges,
+  .metric-grid,
+  .about-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .coach-recommendations {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolio-footer {
+    grid-template-columns: repeat(2, minmax(0, auto));
   }
 }
 
@@ -1050,7 +1348,14 @@ button {
 
   .category-grid,
   .mini-cards,
-  .badges {
+  .badges,
+  .metric-grid,
+  .about-grid,
+  .coach-recommendations {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-coach-card {
     grid-template-columns: 1fr;
   }
 
@@ -1061,5 +1366,9 @@ button {
   .floating-robot {
     width: 4.7rem;
     height: 4.7rem;
+  }
+
+  .portfolio-footer {
+    grid-template-columns: 1fr;
   }
 }

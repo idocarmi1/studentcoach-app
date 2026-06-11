@@ -27,6 +27,8 @@ StudentCoach includes two display modes:
 
 Phone preview is a presentation feature. It helps demonstrate how the app feels on a mobile device without creating a separate app or route.
 
+The phone preview keeps content scrollable inside the device frame, preserves bottom navigation visibility, and supports dark mode so the portfolio demo can show both desktop and mobile behavior from the same codebase.
+
 ## Floating Robot UX Idea
 
 The floating robot assistant is visible across the app and opens the focus center. It gives the product a friendly identity and makes the gamification area feel discoverable.
@@ -40,10 +42,34 @@ The app reduces cognitive load by separating information into clear areas:
 - Daily flow for today's schedule
 - Weekly diary for broader planning
 - Task manager for categorized work
+- Analytics for weekly progress, XP, focus sessions, and consistency
 - Personal area for habits and settings
 - Focus center for Pomodoro, XP, and motivation
+- About Project for portfolio storytelling and product context
 
 Each screen keeps copy short and uses visual grouping to reduce scanning effort.
+
+## AI Coach Card
+
+The dashboard includes a mock AI Coach card that gives calm recommendations without connecting to a real AI service. It helps the product feel smarter while keeping the prototype safe, local, and easy to present.
+
+The recommendations focus on useful next steps:
+
+- Upcoming exam awareness
+- Suggested focus sessions
+- Weekly consistency
+- Open academic tasks
+
+## Analytics UX
+
+The Analytics page turns progress into a quick scan:
+
+- Metric cards summarize completed tasks, focus sessions, XP, and consistency
+- Progress bars show goal balance
+- A compact chart shows weekly progress
+- Achievement cards reinforce momentum
+
+The page uses mock data but is structured like a real product analytics surface.
 
 ## Cards, Spacing, Colors, and Hierarchy
 
@@ -72,3 +98,6 @@ Readability considerations include:
 - Distinct task statuses
 - Readable small labels and progress metadata
 - Responsive layouts for mobile and desktop presentation
+- Keyboard focus states for controls
+- Reusable empty states for tasks, diary gaps, analytics, and achievements
+- Subtle hover and page-transition feedback

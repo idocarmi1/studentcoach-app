@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { achievements, dailyFlow, taskCategories, tasks, user, weeklyEvents } from './data/mockData.js';
+import { achievements, analytics, dailyFlow, taskCategories, tasks, user, weeklyEvents } from './data/mockData.js';
 
 const navItems = [
   { id: 'home', label: 'לוח בקרה' },
   { id: 'diary', label: 'יומן' },
   { id: 'tasks', label: 'משימות' },
-  { id: 'profile', label: 'אזור אישי' }
+  { id: 'analytics', label: 'סטטיסטיקות' },
+  { id: 'profile', label: 'אזור אישי' },
+  { id: 'about', label: 'אודות' }
 ];
 
 const typeLabels = {
@@ -23,7 +25,9 @@ function App() {
     home: <HomePage goTo={setActivePage} />,
     diary: <DiaryPage />,
     tasks: <TasksPage />,
+    analytics: <AnalyticsPage />,
     profile: <ProfilePage />,
+    about: <AboutProjectPage />,
     focus: <GamificationPage />
   };
 
@@ -63,6 +67,7 @@ function AppShell({ activePage, onNavigate, children }) {
       <Navigation activePage={activePage} onNavigate={onNavigate} />
       <main className="page-frame" key={activePage}>
         {children}
+        <PortfolioFooter />
       </main>
       <FloatingRobot onClick={() => onNavigate('focus')} />
     </div>
@@ -120,9 +125,36 @@ function HomePage({ goTo }) {
           <button className="secondary-btn">סנכרון יומן</button>
         </article>
       </div>
+      <AICoachCard />
       <QuickActions />
       <DailyFlow />
       <UpcomingSchedule />
+    </section>
+  );
+}
+
+function AICoachCard() {
+  const recommendations = [
+    'יש לך מבחן בעוד 4 ימים',
+    'מומלץ להשלים 2 סשני פוקוס היום',
+    'השבוע אתה עומד ב-82% מהיעדים שלך',
+    'נשארו 3 משימות אקדמיות פתוחות'
+  ];
+
+  return (
+    <section className="card ai-coach-card" aria-labelledby="ai-coach-title">
+      <div className="ai-coach-icon" aria-hidden="true">AI</div>
+      <div>
+        <SectionTitle title="מאמן אישי" text="המלצות רגועות שמתרגמות את השבוע לצעד הבא." id="ai-coach-title" />
+        <div className="coach-recommendations">
+          {recommendations.map((item) => (
+            <div className="recommendation" key={item}>
+              <span aria-hidden="true">•</span>
+              <p>{item}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
@@ -194,7 +226,9 @@ function DiaryPage() {
                 <strong>{event.title}</strong>
               </div>
             ))}
-            {!weeklyEvents.some((event) => event.day === day) && <p className="empty-day">מרווח נשימה</p>}
+            {!weeklyEvents.some((event) => event.day === day) && (
+              <EmptyState title="מרווח נשימה" text="אין אירועים מתוכננים ליום הזה." compact />
+            )}
           </article>
         ))}
       </div>
@@ -211,6 +245,8 @@ function DiaryPage() {
 }
 
 function TasksPage() {
+  const hasTasks = tasks.length > 0;
+
   return (
     <section className="page">
       <PageHeader eyebrow="מנהל משימות" title="משימות בלי עומס" text="מחלקים לפי אזורים, סוגרים בקצב שלך." />
@@ -223,13 +259,132 @@ function TasksPage() {
         ))}
       </div>
       <div className="task-list">
-        {tasks.map((task) => (
-          <article className="task-card" key={task.id}>
-            <div>
-              <span>{task.category}</span>
-              <strong>{task.title}</strong>
-            </div>
-            <small className={`status ${task.status.replace(' ', '-')}`}>{task.status}</small>
+        {hasTasks ? (
+          tasks.map((task) => (
+            <article className="task-card" key={task.id}>
+              <div>
+                <span>{task.category}</span>
+                <strong>{task.title}</strong>
+              </div>
+              <small className={`status ${task.status.replace(' ', '-')}`}>{task.status}</small>
+            </article>
+          ))
+        ) : (
+          <EmptyState
+            title="אין משימות פתוחות"
+            text="זה זמן מצוין לתכנן את היעד הבא שלך."
+            action="צור משימה חדשה"
+          />
+        )}
+      </div>
+    </section>
+  );
+}
+
+function AnalyticsPage() {
+  const hasAchievements = analytics.achievements.length > 0;
+
+  return (
+    <section className="page analytics-page">
+      <PageHeader eyebrow="סטטיסטיקות" title="התקדמות שאפשר להבין מהר" text="מבט שבועי על משימות, פוקוס, XP ועקביות." />
+      <div className="metric-grid">
+        {analytics.metrics.map((metric) => (
+          <article className="card metric-card" key={metric.label}>
+            <span>{metric.label}</span>
+            <strong>{metric.value}</strong>
+            <p>{metric.helper}</p>
+          </article>
+        ))}
+      </div>
+      <div className="analytics-grid">
+        <section className="card chart-card">
+          <SectionTitle title="התקדמות שבועית" text="שיאים קטנים לאורך השבוע." />
+          <div className="mini-chart" aria-label="גרף התקדמות שבועית">
+            {analytics.weeklyProgress.map((item) => (
+              <div className="chart-bar" key={item.day}>
+                <span style={{ '--value': `${item.value}%` }} />
+                <small>{item.day}</small>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className="card progress-summary-card">
+          <SectionTitle title="סיכום יעדים" text="החלוקה בין לימודים, פוקוס וזמן אישי." />
+          <div className="balance-bars">
+            {analytics.focusBreakdown.map((item) => (
+              <Progress key={item.label} label={item.label} value={item.value} />
+            ))}
+          </div>
+        </section>
+      </div>
+      <section className="card achievements-card">
+        <SectionTitle title="סיכום הישגים" text="מה כבר עבד טוב השבוע." />
+        {hasAchievements ? (
+          <div className="badges">
+            {analytics.achievements.map((badge) => (
+              <article className="badge" key={badge.title}>
+                <span>{badge.icon}</span>
+                <strong>{badge.title}</strong>
+                <small>{badge.text}</small>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <EmptyState title="אין הישגים עדיין" text="השלם סשן פוקוס ראשון כדי לפתוח הישג." compact />
+        )}
+      </section>
+    </section>
+  );
+}
+
+function AboutProjectPage() {
+  const sections = [
+    {
+      title: 'Problem',
+      text: 'סטודנטים מנהלים עומס אקדמי, אחריות אישית, עבודה וזמן פוקוס בכמה כלים מפוזרים. הפיזור הזה מקשה להבין מה חשוב עכשיו ומעודד דחיינות.'
+    },
+    {
+      title: 'Solution',
+      text: 'StudentCoach מרכז יומן, משימות, פומודורו, XP והמלצות מאמן אישי בחוויית RTL עברית אחת, כדי להפוך שבוע עמוס לרצף פעולות ברור.'
+    },
+    {
+      title: 'Target Users',
+      text: 'סטודנטים באוניברסיטה או מכללה, תלמידים עם עומס הגשות, ומשתמשים דוברי עברית שרוצים כלי תכנון רגוע ונגיש.'
+    },
+    {
+      title: 'UX Decisions',
+      text: 'המערכת משתמשת בהיררכיה חזותית ברורה, כרטיסים עקביים, תצוגת טלפון להצגה, מצב כהה קריא ורובוט צף שמוביל למרכז הפוקוס בלי להעמיס על הניווט.'
+    },
+    {
+      title: 'Technology',
+      text: 'React, Vite, נתוני mock, ארכיטקטורת רכיבים, ניהול state מקומי, CSS variables, Hebrew RTL, dark mode ו-phone preview.'
+    },
+    {
+      title: 'Future Roadmap',
+      text: 'חיבור עתידי ל-Google Calendar API, אימות משתמשים, שמירת נתונים אמיתית ומאמן AI אמיתי שייצר המלצות מותאמות אישית.'
+    }
+  ];
+
+  return (
+    <section className="page about-page">
+      <PageHeader eyebrow="אודות הפרויקט" title="StudentCoach UI/UX Case Study" text="קונספט מוצרי שמראה איך כלי סטודנטיאלי יכול להיות שימושי, רגוע וראוי לפרזנטציה." />
+      <div className="about-hero card">
+        <div>
+          <span className="pill">Portfolio Project 2026</span>
+          <h2>עוזרים לסטודנטים להפוך עומס למסלול פעולה.</h2>
+          <p>הפרויקט מדגים חשיבה מוצרית, עיצוב RTL, רכיבי React, מצב כהה, תצוגת מובייל ומערכת עיצוב עקבית על בסיס נתוני mock.</p>
+        </div>
+        <div className="case-study-stats" aria-label="נקודות עיקריות בפרויקט">
+          <strong>RTL</strong>
+          <strong>React</strong>
+          <strong>Vite</strong>
+        </div>
+      </div>
+      <div className="about-grid">
+        {sections.map((section) => (
+          <article className="card about-card" key={section.title}>
+            <h2>{section.title}</h2>
+            <p>{section.text}</p>
           </article>
         ))}
       </div>
@@ -269,6 +424,8 @@ function ProfilePage() {
 }
 
 function GamificationPage() {
+  const hasAchievements = achievements.length > 0;
+
   return (
     <section className="page focus-page">
       <PageHeader eyebrow="מרכז הפוקוס" title="בונים מומנטום קטן" text="פוקוס, XP והישגים במקום אחד." />
@@ -284,15 +441,19 @@ function GamificationPage() {
         <PomodoroTimer />
         <section className="card achievements-card">
           <SectionTitle title="הישגים" text="סימנים קטנים לזה שאתה מתקדם." />
-          <div className="badges">
-            {achievements.map((badge) => (
-              <article className="badge" key={badge.title}>
-                <span>{badge.icon}</span>
-                <strong>{badge.title}</strong>
-                <small>{badge.text}</small>
-              </article>
-            ))}
-          </div>
+          {hasAchievements ? (
+            <div className="badges">
+              {achievements.map((badge) => (
+                <article className="badge" key={badge.title}>
+                  <span>{badge.icon}</span>
+                  <strong>{badge.title}</strong>
+                  <small>{badge.text}</small>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <EmptyState title="אין הישגים עדיין" text="סיים סשן פוקוס כדי לקבל את ההישג הראשון." compact />
+          )}
         </section>
       </div>
     </section>
@@ -391,12 +552,34 @@ function PageHeader({ eyebrow, title, text }) {
   );
 }
 
-function SectionTitle({ title, text }) {
+function SectionTitle({ title, text, id }) {
   return (
     <div className="section-title">
-      <h2>{title}</h2>
+      <h2 id={id}>{title}</h2>
       <p>{text}</p>
     </div>
+  );
+}
+
+function EmptyState({ title, text, action, compact = false }) {
+  return (
+    <div className={`empty-state ${compact ? 'compact' : ''}`}>
+      <span aria-hidden="true">◎</span>
+      <strong>{title}</strong>
+      <p>{text}</p>
+      {action && <button className="secondary-btn">{action}</button>}
+    </div>
+  );
+}
+
+function PortfolioFooter() {
+  return (
+    <footer className="portfolio-footer">
+      <span>Built by Ido Carmi</span>
+      <span>React + Vite</span>
+      <span>Portfolio Project 2026</span>
+      <span>StudentCoach UI/UX Case Study</span>
+    </footer>
   );
 }
 

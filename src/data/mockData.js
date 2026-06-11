@@ -44,3 +44,31 @@ export const achievements = [
   { icon: '◐', title: 'איזון שבועי', text: 'שמרת על קצב בריא' },
   { icon: '25', title: 'פומודורו נקי', text: '25 דקות בלי הסחות' }
 ];
+
+export const analytics = {
+  metrics: [
+    { label: 'משימות הושלמו השבוע', value: '14', helper: '4 יותר מהשבוע הקודם' },
+    { label: 'סשני פוקוס', value: '6', helper: '150 דקות לימוד נקי' },
+    { label: 'XP שנצבר', value: '420', helper: 'מתקרבים לרמה הבאה' },
+    { label: 'עקביות שבועית', value: '82%', helper: 'קצב יציב ובריא' }
+  ],
+  weeklyProgress: [
+    { day: 'א', value: 68 },
+    { day: 'ב', value: 82 },
+    { day: 'ג', value: 54 },
+    { day: 'ד', value: 76 },
+    { day: 'ה', value: 92 },
+    { day: 'ו', value: 48 },
+    { day: 'ש', value: 63 }
+  ],
+  focusBreakdown: [
+    { label: 'לימודים', value: 74 },
+    { label: 'פוקוס', value: 62 },
+    { label: 'אישי', value: 58 }
+  ],
+  achievements: [
+    { icon: '14', title: 'שבוע פרודוקטיבי', text: '14 משימות נסגרו בלי עומס' },
+    { icon: '6', title: 'פוקוס יציב', text: '6 סשנים הושלמו השבוע' },
+    { icon: '82%', title: 'עקביות גבוהה', text: 'עמדת ברוב היעדים שלך' }
+  ]
+};

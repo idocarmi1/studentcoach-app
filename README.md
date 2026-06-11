@@ -20,21 +20,37 @@ StudentCoach addresses this by combining planning, focus, and encouragement into
 ## Main Features
 
 - Home dashboard / לוח בקרה with daily flow and coach check-in
+- AI Coach card / מאמן אישי with calm mock recommendations
 - Weekly diary / יומן שבועי with academic, personal, and focus events
 - Task manager / מנהל משימות with categories, statuses, and progress
+- Analytics page / סטטיסטיקות with weekly metrics, progress bars, mini chart, and achievement summary
 - Personal area / אזור אישי with habits, settings, and balance score
 - Gamification center / מרכז הפוקוס with XP, badges, and focus tools
+- About Project page / אודות הפרויקט for portfolio and case-study presentation
 - Floating robot assistant that opens the focus center
 - Pomodoro timer with start, pause, reset, and XP reward message
 - Desktop view and phone preview mode
 - Regular light mode and dark mode
 - Full Hebrew RTL interface
+- Reusable empty states, subtle micro-interactions, and a polished portfolio footer
 
 ## UI/UX Concept
 
 StudentCoach is designed around reducing mental overload. The visual language uses soft cards, rounded surfaces, light blue tones, purple accents, clear hierarchy, and friendly micro-interactions.
 
 The floating robot assistant acts as a playful entry point into focus mode, XP, achievements, and Pomodoro sessions. It keeps motivation visible without adding another full navigation item.
+
+The latest UI pass turns the app into a more portfolio-ready product concept with clearer visual hierarchy, stronger navigation states, consistent cards, animated progress indicators, better dark-mode readability, and a more complete phone-preview experience.
+
+## Portfolio Goals
+
+StudentCoach is suitable for:
+
+- University presentation
+- Junior frontend portfolio
+- Product / UX case study
+- GitHub portfolio
+- Vercel demo
 
 ## Tech Stack
 
@@ -43,6 +59,21 @@ The floating robot assistant acts as a playful entry point into focus mode, XP, 
 - CSS variables
 - Responsive CSS layouts
 - Mock data for tasks, calendar events, XP, achievements, and profile content
+- Component-based page structure
+- Local React state management
+
+## Design System
+
+The app uses CSS tokens for:
+
+- Typography sizes
+- Spacing scale
+- Light and dark theme colors
+- Card, surface, border, primary, secondary, success, warning, text, and muted text colors
+- Radius scale for small, medium, large, and pill shapes
+- Card, elevated, and floating shadows
+
+These tokens keep the dashboard, diary, tasks, analytics, profile, focus center, about page, phone preview, and dark mode visually consistent.
 
 ## Run Locally
 
@@ -95,11 +126,21 @@ studentcoach-app/
 Add screenshots here when presenting the project on GitHub:
 
 - Dashboard / לוח בקרה: `docs/screenshots/dashboard.png`
+- Analytics / סטטיסטיקות: `docs/screenshots/analytics.png`
+- About Project / אודות הפרויקט: `docs/screenshots/about-project.png`
 - Weekly diary / יומן שבועי: `docs/screenshots/weekly-diary.png`
 - Task manager / מנהל משימות: `docs/screenshots/tasks.png`
 - Focus center / מרכז הפוקוס: `docs/screenshots/focus-center.png`
 - Phone preview mode: `docs/screenshots/phone-preview.png`
 - Dark mode: `docs/screenshots/dark-mode.png`
+
+## Vercel Demo
+
+Add the deployed Vercel URL here:
+
+```text
+https://your-studentcoach-demo.vercel.app
+```
 
 ## Future Improvements
 

@@ -25,12 +25,17 @@ Key components:
 - `Navigation`: desktop and mobile-friendly navigation
 - `FloatingRobot`: focus center entry point
 - `HomePage`: dashboard / לוח בקרה
+- `AICoachCard`: mock personal coach recommendations on the dashboard
 - `DiaryPage`: weekly diary / יומן שבועי
 - `TasksPage`: task manager / מנהל משימות
+- `AnalyticsPage`: weekly metrics, mini chart, progress summary, and achievement recap
 - `ProfilePage`: personal area / אזור אישי
+- `AboutProjectPage`: portfolio case-study page
 - `GamificationPage`: focus center / מרכז הפוקוס
 - `PomodoroTimer`: focus timer and XP reward interaction
 - `XPProgress`: level progress visualization
+- `EmptyState`: reusable friendly empty-state component
+- `PortfolioFooter`: minimal footer shown across pages
 
 ## State Management
 
@@ -45,6 +50,8 @@ Current state includes:
 
 This is enough for the current single-user frontend demo. A larger production version could introduce a global store or server-backed state.
 
+The current page-state approach still renders only one page at a time, including the Analytics and About Project pages.
+
 ## Mock Data
 
 Mock data is stored in `src/data/mockData.js`.
@@ -56,6 +63,7 @@ It includes:
 - Weekly events
 - Task categories and tasks
 - XP and achievement data
+- Analytics metrics, weekly progress, focus breakdown, and achievement summary
 
 Mock data keeps the app runnable without a backend while still presenting realistic product behavior.
 
@@ -92,6 +100,8 @@ theme-dark
 
 CSS variables in `src/styles.css` define the actual colors, shadows, surfaces, and readability behavior for each theme.
 
+The design-token layer covers typography, spacing, color roles, radius values, shadows, light theme, and dark theme. This keeps dashboard cards, navigation, analytics, empty states, dark mode, and phone preview aligned.
+
 ## Display Mode Toggle Logic
 
 The display mode toggle is also controlled by top-level state:
@@ -108,6 +118,8 @@ preview-mobile
 ```
 
 Desktop mode shows the app normally. Phone preview mode wraps the same app inside a centered phone-like frame, with internal scrolling for the active page.
+
+The phone preview reflows the six primary navigation items into a compact bottom navigation while keeping the floating robot above the navigation area.
 
 ## Component Structure
 
