@@ -12,12 +12,6 @@ const navItems = [
   { id: 'about', label: 'אודות' }
 ];
 
-const typeLabels = {
-  academic: 'לימודים',
-  personal: 'אישי',
-  focus: 'פוקוס'
-};
-
 function App() {
   const [activePage, setActivePage] = useState('home');
   const [previewMode, setPreviewMode] = useState('desktop');
@@ -158,8 +152,11 @@ function FloatingRobot({ onClick }) {
 
 function HomePage({ goTo, openModal }) {
   return (
-    <section className="page">
-      <PageHeader eyebrow="לוח בקרה" title={`${user.greeting}, ${user.name}`} text="יום מסודר מתחיל בצעד קטן וברור." />
+    <section className="page home-page">
+      <HomeHeader />
+      <DailyPlanHero openModal={openModal} />
+      <HomeStats />
+      <WeekStrip goTo={goTo} />
       <div className="dashboard-grid">
         <article className="card coach-card">
           <span className="pill">צ'ק אין מאמן</span>
@@ -175,8 +172,148 @@ function HomePage({ goTo, openModal }) {
       </div>
       <AICoachCard />
       <QuickActions openModal={openModal} />
-      <DailyFlow />
-      <UpcomingSchedule />
+    </section>
+  );
+}
+
+function HomeHeader() {
+  return (
+    <header className="home-top">
+      <div className="hi">
+        <div className="k">יום רביעי · 18 ביוני</div>
+        <h1>{user.greeting}, <span>{user.name}</span></h1>
+      </div>
+      <div className="av" aria-hidden="true">{user.name.charAt(0)}</div>
+    </header>
+  );
+}
+
+const timelineNodeByType = {
+  academic: 'blue',
+  personal: 'warm',
+  focus: 'teal'
+};
+
+function DailyPlanHero({ openModal }) {
+  return (
+    <section className="hero" aria-labelledby="daily-plan-title">
+      <div className="hero-h">
+        <h2 className="hero-t" id="daily-plan-title">התוכנית שלך להיום</h2>
+        <span className="ai-pill"><span className="dot" aria-hidden="true" />סודר ע״י AI</span>
+      </div>
+      <p className="hero-sub">{dailyFlow.length} מקטעים · חלון פנוי אחד · זמן אישי 🌿</p>
+
+      <div className="timeline">
+        {dailyFlow.map((item, index) => (
+          <React.Fragment key={`${item.time}-${item.title}`}>
+            <div className={`tl-event ${timelineNodeByType[item.type] || 'blue'}`}>
+              <Clock value={item.time} />
+              <div className="tl-rail"><span className="tl-node" /></div>
+              <div className="tl-card">
+                <strong className="tl-title">{item.title}</strong>
+                <span className="tl-meta">{item.note}</span>
+              </div>
+            </div>
+            {index === 0 && (
+              <div className="tl-event now">
+                <Clock value="11:30" />
+                <div className="tl-rail"><span className="tl-node" /></div>
+                <div className="tl-nudge">
+                  <strong className="nudge-title">חלון פנוי — שעתיים</strong>
+                  <span className="nudge-meta">מספיק כדי לסמן את תרגיל 3 מסטטיסטיקה לפני הצהריים.</span>
+                  <button className="nudge-go" onClick={() => openModal('task')}>הוסף משימה</button>
+                </div>
+              </div>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Clock({ value }) {
+  return <span className="tl-time" dir="ltr">{value}</span>;
+}
+
+function HomeStats() {
+  return (
+    <div className="home-stats">
+      <article className="stat">
+        <span className="stat-lab">המטרות השבוע</span>
+        <div className="ring-wrap">
+          <StatRing percent={68} />
+          <div className="ring-info">
+            <strong className="ring-big">3 נותרו</strong>
+            <span className="ring-small">מתוך 9 השבוע</span>
+          </div>
+        </div>
+      </article>
+      <article className="stat next-task">
+        <span className="stat-lab">המשימה הבאה</span>
+        <span className="task-pill">סטטיסטיקה</span>
+        <strong className="task-title">תרגיל 3 — להתפנות</strong>
+        <span className="task-due">להגשה <b>מחר · 23:59</b></span>
+      </article>
+    </div>
+  );
+}
+
+function StatRing({ percent }) {
+  const radius = 15.5;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference * (1 - Math.min(Math.max(percent, 0), 100) / 100);
+
+  return (
+    <svg className="stat-ring" viewBox="0 0 36 36" role="img" aria-label={`${percent} אחוז`}>
+      <circle cx="18" cy="18" r={radius} fill="none" stroke="var(--track)" strokeWidth="5" />
+      <circle
+        cx="18"
+        cy="18"
+        r={radius}
+        fill="none"
+        stroke="var(--blue)"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeDasharray={circumference.toFixed(1)}
+        strokeDashoffset={offset.toFixed(1)}
+        transform="rotate(-90 18 18)"
+      />
+      <text className="ring-pct" x="18" y="22" textAnchor="middle">{percent}%</text>
+    </svg>
+  );
+}
+
+const weekStripDays = [
+  { day: 'א׳', date: 15, dots: 1 },
+  { day: 'ב׳', date: 16, dots: 2 },
+  { day: 'ג׳', date: 17, dots: 0 },
+  { day: 'ד׳', date: 18, dots: 2, today: true },
+  { day: 'ה׳', date: 19, dots: 1 },
+  { day: 'ו׳', date: 20, dots: 0 },
+  { day: 'ש׳', date: 21, dots: 0 }
+];
+
+function WeekStrip({ goTo }) {
+  return (
+    <section className="week-strip" aria-label="השבוע שלך">
+      <div className="week-strip-h">
+        <h2 className="week-strip-t">השבוע שלך</h2>
+        <button className="week-strip-a" onClick={() => goTo('diary')}>ליומן המלא →</button>
+      </div>
+      <div className="week-strip-days">
+        {weekStripDays.map((item) => (
+          <div className={`week-day ${item.today ? 'today' : ''}`} key={item.date}>
+            <span className="week-day-name">{item.day}</span>
+            <span className="week-day-num">{item.date}</span>
+            <span className="week-day-dots">
+              {Array.from({ length: item.dots }).map((_, dotIndex) => (
+                <i key={dotIndex} />
+              ))}
+            </span>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
@@ -261,42 +398,6 @@ function QuickActions({ openModal }) {
         <button key={action.label} onClick={action.onClick}>{action.label}</button>
       ))}
     </div>
-  );
-}
-
-function DailyFlow() {
-  return (
-    <section className="card">
-      <SectionTitle title="הזרימה היומית" text="לימודים, חיים ופוקוס במקום אחד." />
-      <div className="flow-list">
-        {dailyFlow.map((item) => (
-          <div className={`flow-item ${item.type}`} key={`${item.time}-${item.title}`}>
-            <time>{item.time}</time>
-            <div>
-              <strong>{item.title}</strong>
-              <span>{item.note}</span>
-            </div>
-            <small>{typeLabels[item.type]}</small>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function UpcomingSchedule() {
-  return (
-    <section className="bottom-section">
-      <SectionTitle title="מה קרוב?" text="הדברים הבאים בתור, בלי רעש מיותר." />
-      <div className="mini-cards">
-        {dailyFlow.slice(1, 4).map((item) => (
-          <article className="mini-card" key={item.title}>
-            <span>{item.time}</span>
-            <strong>{item.title}</strong>
-          </article>
-        ))}
-      </div>
-    </section>
   );
 }
 
