@@ -4,12 +4,12 @@ import { achievements, analytics, dailyFlow, taskCategories, tasks as mockTasks,
 const USER_TASKS_STORAGE_KEY = 'studentcoach-user-tasks';
 
 const navItems = [
-  { id: 'home', label: 'לוח בקרה' },
-  { id: 'diary', label: 'יומן' },
-  { id: 'tasks', label: 'משימות' },
-  { id: 'analytics', label: 'סטטיסטיקות' },
-  { id: 'profile', label: 'אזור אישי' },
-  { id: 'about', label: 'אודות' }
+  { id: 'home', label: 'לוח בקרה', icon: 'home' },
+  { id: 'diary', label: 'יומן', icon: 'calendar' },
+  { id: 'tasks', label: 'משימות', icon: 'check' },
+  { id: 'analytics', label: 'סטטיסטיקות', icon: 'chart' },
+  { id: 'profile', label: 'אזור אישי', icon: 'user' },
+  { id: 'about', label: 'אודות', icon: 'info' }
 ];
 
 function App() {
@@ -106,7 +106,7 @@ function ControlBar({ previewMode, theme, onTogglePreview, onToggleTheme }) {
 function AppShell({ activePage, onNavigate, children }) {
   return (
     <div className="app-shell" dir="rtl">
-      <Navigation activePage={activePage} onNavigate={onNavigate} />
+      <BottomNav activePage={activePage} onNavigate={onNavigate} />
       <main className="page-frame" key={activePage}>
         {children}
         <PortfolioFooter />
@@ -116,7 +116,9 @@ function AppShell({ activePage, onNavigate, children }) {
   );
 }
 
-function Navigation({ activePage, onNavigate }) {
+// Responsive primary nav: vertical sidebar on desktop, translucent icon
+// bottom-bar on phones/preview — matching the studentcoach_home_hifi bottom nav.
+function BottomNav({ activePage, onNavigate }) {
   return (
     <nav className="navigation" aria-label="ניווט ראשי">
       <div className="brand">
@@ -132,12 +134,31 @@ function Navigation({ activePage, onNavigate }) {
             key={item.id}
             className={activePage === item.id ? 'active' : ''}
             onClick={() => onNavigate(item.id)}
+            aria-current={activePage === item.id ? 'page' : undefined}
           >
-            {item.label}
+            <span className="nav-ic"><NavIcon name={item.icon} /></span>
+            <span className="nav-label">{item.label}</span>
           </button>
         ))}
       </div>
     </nav>
+  );
+}
+
+function NavIcon({ name }) {
+  const glyphs = {
+    home: <><path d="M3 11l9-8 9 8" /><path d="M5 10v10h14V10" /></>,
+    calendar: <><rect x="3" y="4" width="18" height="17" rx="2" /><path d="M3 9h18M8 2v4M16 2v4" /></>,
+    check: <><path d="M9 11l3 3 8-8" /><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9" /></>,
+    chart: <><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></>,
+    user: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></>,
+    info: <><circle cx="12" cy="12" r="9" /><path d="M12 16v-5M12 8h.01" /></>
+  };
+
+  return (
+    <svg className="nav-ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {glyphs[name]}
+    </svg>
   );
 }
 
@@ -158,17 +179,17 @@ function HomePage({ goTo, openModal }) {
       <HomeStats />
       <WeekStrip goTo={goTo} />
       <div className="dashboard-grid">
-        <article className="card coach-card">
-          <span className="pill">צ'ק אין מאמן</span>
+        <Card className="coach-card">
+          <Pill tone="sky">צ'ק אין מאמן</Pill>
           <h2>איך האנרגיה שלך היום?</h2>
           <p>בחר משימה אחת חשובה, ואז תן לעצמך חלון פוקוס קצר. לא צריך לנצח את כל היום בבת אחת.</p>
-          <button className="primary-btn" onClick={() => goTo('focus')}>להתחיל פוקוס</button>
-        </article>
-        <article className="card sync-card">
+          <Button onClick={() => goTo('focus')}>להתחיל פוקוס</Button>
+        </Card>
+        <Card className="sync-card">
           <h3>סנכרון Google Calendar</h3>
           <p>חבר אירועים אישיים ואקדמיים לתמונה אחת רגועה.</p>
-          <button className="secondary-btn" onClick={() => openModal('calendar')}>סנכרון יומן</button>
-        </article>
+          <Button variant="secondary" onClick={() => openModal('calendar')}>סנכרון יומן</Button>
+        </Card>
       </div>
       <AICoachCard />
       <QuickActions openModal={openModal} />
@@ -346,7 +367,7 @@ function AICoachCard() {
   }
 
   return (
-    <section className="card ai-coach-card" aria-labelledby="ai-coach-title">
+    <Card as="section" className="ai-coach-card" aria-labelledby="ai-coach-title">
       <div className="ai-coach-icon" aria-hidden="true">AI</div>
       <div>
         <SectionTitle title="מאמן אישי" text="המלצות רגועות שמתרגמות את השבוע לצעד הבא." id="ai-coach-title" />
@@ -367,7 +388,7 @@ function AICoachCard() {
               onChange={(event) => setQuestion(event.target.value)}
               placeholder="שאל את המאמן שאלה..."
             />
-            <button className="primary-btn" type="submit">שאל</button>
+            <Button type="submit">שאל</Button>
           </div>
           {answer && (
             <div className="coach-answer" role="status">
@@ -377,7 +398,7 @@ function AICoachCard() {
           )}
         </form>
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -428,14 +449,14 @@ function DiaryPage() {
           </article>
         ))}
       </div>
-      <section className="card balance-card">
+      <Card as="section" className="balance-card">
         <SectionTitle title="איזון שבועי" text="כרגע השבוע שלך נוטה לפוקוס בריא עם מספיק זמן אישי." />
         <div className="balance-bars">
           <Progress label="לימודים" value={68} />
           <Progress label="אישי" value={52} />
           <Progress label="פוקוס" value={74} />
         </div>
-      </section>
+      </Card>
     </section>
   );
 }
@@ -446,12 +467,12 @@ function TasksPage({ taskList, openModal }) {
   return (
     <section className="page">
       <PageHeader eyebrow="מנהל משימות" title="משימות בלי עומס" text="מחלקים לפי אזורים, סוגרים בקצב שלך." />
-      <button className="primary-btn add-task" onClick={() => openModal('task')}>+ משימה חדשה</button>
+      <Button className="add-task" onClick={() => openModal('task')}>+ משימה חדשה</Button>
       <div className="category-grid">
         {taskCategories.map((category) => (
-          <article className="card category-card" key={category.name}>
+          <Card className="category-card" key={category.name}>
             <Progress label={category.name} value={category.progress} />
-          </article>
+          </Card>
         ))}
       </div>
       <div className="task-list">
@@ -533,12 +554,12 @@ function CalendarSyncPanel() {
       <article className="modal-option">
         <h3>פתח Google Calendar</h3>
         <p>כדי לחבר יומן Google אמיתי, ניתן לפתוח את Google Calendar ולהעתיק קישור iCal/URL ציבורי אם קיים.</p>
-        <button
-          className="secondary-btn"
+        <Button
+          variant="secondary"
           onClick={() => window.open('https://calendar.google.com/calendar/u/0/r/settings/export', '_blank', 'noopener,noreferrer')}
         >
           פתח Google Calendar
-        </button>
+        </Button>
       </article>
       <form className="modal-option" onSubmit={saveCalendarUrl}>
         <h3>סנכרון באמצעות URL</h3>
@@ -550,7 +571,7 @@ function CalendarSyncPanel() {
           }}
           placeholder="הדבק כאן קישור iCal / Calendar URL"
         />
-        <button className="primary-btn" type="submit">שמור קישור</button>
+        <Button type="submit">שמור קישור</Button>
         {message && <p className="form-message success" role="status">{message}</p>}
       </form>
     </div>
@@ -593,18 +614,18 @@ function WhatsAppPanel() {
           }}
           placeholder="הדבק קישור לקבוצת WhatsApp"
         />
-        <button className="primary-btn" type="submit">שמור קישור</button>
+        <Button type="submit">שמור קישור</Button>
         {error && <p className="form-message error" role="alert">{error}</p>}
         {message && <p className="form-message success" role="status">{message}</p>}
       </div>
       {hasValidSavedLink && (
-        <button
-          className="secondary-btn"
+        <Button
+          variant="secondary"
           type="button"
           onClick={() => window.open(whatsAppUrl, '_blank', 'noopener,noreferrer')}
         >
           פתח קבוצת וואטסאפ
-        </button>
+        </Button>
       )}
     </form>
   );
@@ -663,8 +684,8 @@ function NewTaskForm({ onAddTask, onClose }) {
       </label>
       {error && <p className="form-message error" role="alert">{error}</p>}
       <div className="modal-actions">
-        <button className="primary-btn" type="submit">הוסף משימה</button>
-        <button className="ghost-btn" type="button" onClick={onClose}>ביטול</button>
+        <Button type="submit">הוסף משימה</Button>
+        <Button variant="ghost" type="button" onClick={onClose}>ביטול</Button>
       </div>
     </form>
   );
@@ -678,15 +699,15 @@ function AnalyticsPage() {
       <PageHeader eyebrow="סטטיסטיקות" title="התקדמות שאפשר להבין מהר" text="מבט שבועי על משימות, פוקוס, XP ועקביות." />
       <div className="metric-grid">
         {analytics.metrics.map((metric) => (
-          <article className="card metric-card" key={metric.label}>
+          <Card className="metric-card" key={metric.label}>
             <span>{metric.label}</span>
             <strong>{metric.value}</strong>
             <p>{metric.helper}</p>
-          </article>
+          </Card>
         ))}
       </div>
       <div className="analytics-grid">
-        <section className="card chart-card">
+        <Card as="section" className="chart-card">
           <SectionTitle title="התקדמות שבועית" text="שיאים קטנים לאורך השבוע." />
           <div className="mini-chart" aria-label="גרף התקדמות שבועית">
             {analytics.weeklyProgress.map((item) => (
@@ -696,17 +717,17 @@ function AnalyticsPage() {
               </div>
             ))}
           </div>
-        </section>
-        <section className="card progress-summary-card">
+        </Card>
+        <Card as="section" className="progress-summary-card">
           <SectionTitle title="סיכום יעדים" text="החלוקה בין לימודים, פוקוס וזמן אישי." />
           <div className="balance-bars">
             {analytics.focusBreakdown.map((item) => (
               <Progress key={item.label} label={item.label} value={item.value} />
             ))}
           </div>
-        </section>
+        </Card>
       </div>
-      <section className="card achievements-card">
+      <Card as="section" className="achievements-card">
         <SectionTitle title="סיכום הישגים" text="מה כבר עבד טוב השבוע." />
         {hasAchievements ? (
           <div className="badges">
@@ -721,7 +742,7 @@ function AnalyticsPage() {
         ) : (
           <EmptyState title="אין הישגים עדיין" text="השלם סשן פוקוס ראשון כדי לפתוח הישג." compact />
         )}
-      </section>
+      </Card>
     </section>
   );
 }
@@ -757,9 +778,9 @@ function AboutProjectPage() {
   return (
     <section className="page about-page">
       <PageHeader eyebrow="אודות הפרויקט" title="StudentCoach UI/UX Case Study" text="קונספט מוצרי שמראה איך כלי סטודנטיאלי יכול להיות שימושי, רגוע וראוי לפרזנטציה." />
-      <div className="about-hero card">
+      <Card className="about-hero">
         <div>
-          <span className="pill">Portfolio Project 2026</span>
+          <Pill tone="warm">Portfolio Project 2026</Pill>
           <h2>עוזרים לסטודנטים להפוך עומס למסלול פעולה.</h2>
           <p>הפרויקט מדגים חשיבה מוצרית, עיצוב RTL, רכיבי React, מצב כהה, תצוגת מובייל ומערכת עיצוב עקבית על בסיס נתוני mock.</p>
         </div>
@@ -768,13 +789,13 @@ function AboutProjectPage() {
           <strong>React</strong>
           <strong>Vite</strong>
         </div>
-      </div>
+      </Card>
       <div className="about-grid">
         {sections.map((section) => (
-          <article className="card about-card" key={section.title}>
+          <Card className="about-card" key={section.title}>
             <h2>{section.title}</h2>
             <p>{section.text}</p>
-          </article>
+          </Card>
         ))}
       </div>
     </section>
@@ -786,27 +807,27 @@ function ProfilePage() {
     <section className="page">
       <PageHeader eyebrow="אזור אישי" title="הקצב שלך חשוב" text="התראות עדינות והרגלים קטנים שומרים על שבוע יציב." />
       <div className="profile-grid">
-        <article className="card score-card">
+        <Card className="score-card">
           <span>בריאות איזון שבועית</span>
           <strong>{user.healthScore}</strong>
           <p>מצוין. יש מקום לעוד מנוחה קטנה בין משימות ארוכות.</p>
-        </article>
-        <article className="card settings-card">
+        </Card>
+        <Card className="settings-card">
           <SectionTitle title="הגדרות מאמן" text="תזכורות חכמות בלי להציף." />
           <Toggle label="התראות מאמן פעילות" checked />
           <Toggle label="נגיעות עדינות כל 30 דקות" checked />
           <Toggle label="סיכום שבועי ביום חמישי" />
-        </article>
-        <article className="card habits-card">
+        </Card>
+        <Card className="habits-card">
           <SectionTitle title="הרגלים קבועים" text="שלושה עוגנים קטנים ליום רגוע." />
           {['מים ליד השולחן', 'סשן פוקוס אחד', 'סגירת משימה לפני ערב'].map((habit) => (
             <div className="habit" key={habit}>✓ {habit}</div>
           ))}
-        </article>
-        <article className="card account-card">
+        </Card>
+        <Card className="account-card">
           <SectionTitle title="חשבון" text="פרופיל, סנכרונים והעדפות תצוגה." />
-          <button className="secondary-btn">עריכת הגדרות</button>
-        </article>
+          <Button variant="secondary">עריכת הגדרות</Button>
+        </Card>
       </div>
     </section>
   );
@@ -818,17 +839,17 @@ function GamificationPage() {
   return (
     <section className="page focus-page">
       <PageHeader eyebrow="מרכז הפוקוס" title="בונים מומנטום קטן" text="פוקוס, XP והישגים במקום אחד." />
-      <div className="focus-hero card">
+      <Card className="focus-hero">
         <RobotFace />
         <div>
           <h2>{user.level}</h2>
           <XPProgress current={user.xp} target={user.nextLevelXp} />
           <p className="xp-total">{user.xp.toLocaleString('he-IL')} נקודות XP</p>
         </div>
-      </div>
+      </Card>
       <div className="focus-grid">
         <PomodoroTimer />
-        <section className="card achievements-card">
+        <Card as="section" className="achievements-card">
           <SectionTitle title="הישגים" text="סימנים קטנים לזה שאתה מתקדם." />
           {hasAchievements ? (
             <div className="badges">
@@ -843,7 +864,7 @@ function GamificationPage() {
           ) : (
             <EmptyState title="אין הישגים עדיין" text="סיים סשן פוקוס כדי לקבל את ההישג הראשון." compact />
           )}
-        </section>
+        </Card>
       </div>
     </section>
   );
@@ -878,17 +899,17 @@ function PomodoroTimer() {
   }
 
   return (
-    <section className={`card timer-card ${running ? 'running' : ''}`}>
+    <Card as="section" className={`timer-card ${running ? 'running' : ''}`}>
       <SectionTitle title="פומודורו 25 דקות" text="מתחילים קטן, נשארים בעניינים." />
       <div className="timer-display">{minutes}:{seconds}</div>
       <div className="timer-actions">
-        <button className="primary-btn" onClick={() => { setRunning(true); setReward(false); }}>התחלה</button>
-        <button className="secondary-btn" onClick={() => setRunning(false)}>השהיה</button>
-        <button className="ghost-btn" onClick={() => { setSecondsLeft(25 * 60); setRunning(false); setReward(false); }}>איפוס</button>
+        <Button onClick={() => { setRunning(true); setReward(false); }}>התחלה</Button>
+        <Button variant="secondary" onClick={() => setRunning(false)}>השהיה</Button>
+        <Button variant="ghost" onClick={() => { setSecondsLeft(25 * 60); setRunning(false); setReward(false); }}>איפוס</Button>
       </div>
       <button className="complete-btn" onClick={completeSession}>סיימתי סשן</button>
       {reward && <p className="reward">כל הכבוד! קיבלת 25 נקודות XP</p>}
-    </section>
+    </Card>
   );
 }
 
@@ -931,6 +952,40 @@ function Toggle({ label, checked = false }) {
   );
 }
 
+/* ---------- Shared design-system primitives (DESIGN_UPGRADE) ---------- */
+
+function Card({ as: Tag = 'article', className = '', children, ...rest }) {
+  return (
+    <Tag className={['card', className].filter(Boolean).join(' ')} {...rest}>
+      {children}
+    </Tag>
+  );
+}
+
+function Pill({ tone = 'sky', className = '', children }) {
+  return (
+    <span className={['pill-badge', `pill-${tone}`, className].filter(Boolean).join(' ')}>
+      {children}
+    </span>
+  );
+}
+
+const BUTTON_VARIANTS = {
+  primary: 'primary-btn',
+  secondary: 'secondary-btn',
+  ghost: 'ghost-btn',
+  warm: 'warm-btn'
+};
+
+function Button({ variant = 'primary', as: Tag = 'button', className = '', children, ...rest }) {
+  const variantClass = BUTTON_VARIANTS[variant] || BUTTON_VARIANTS.primary;
+  return (
+    <Tag className={[variantClass, className].filter(Boolean).join(' ')} {...rest}>
+      {children}
+    </Tag>
+  );
+}
+
 function PageHeader({ eyebrow, title, text }) {
   return (
     <header className="page-header">
@@ -956,7 +1011,7 @@ function EmptyState({ title, text, action, compact = false }) {
       <span aria-hidden="true">◎</span>
       <strong>{title}</strong>
       <p>{text}</p>
-      {action && <button className="secondary-btn">{action}</button>}
+      {action && <Button variant="secondary">{action}</Button>}
     </div>
   );
 }
